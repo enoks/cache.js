@@ -1,0 +1,19 @@
+{
+  "name": "cache.js",
+  "description": "Cache data in localStorage (sessionStorage), cookie or whatever you need. Lightweight and extendable.",
+  "version": "1.0.0",
+  "main": "cache.js",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enoks/cache.js"
+  },
+  "bugs": {
+    "url": "https://github.com/enoks/cache.js/issues"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0"
+  }
+}
