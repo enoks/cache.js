@@ -18,16 +18,16 @@ Lightweight, extendable and plain JS (no frameworks required). AMD or CommonJS r
 </script>
 ```
 
-By default there are two STORAGE types implemented:
+By default there are two `STORAGE` types implemented:
 
-# _localStorage_ (default)
-# _cookie_
+- _localStorage_ (default)
+- _cookie_
 
 ### Methods
 
 Every storage has three methods<sup>1</sup> to **set**, **get** and **remove** data from cache.
 
-_<sup>1</sup> Could differ from [custom storages](#custom-storage)_
+_<sup>1</sup> could differ from [custom storages](#custom-storage)_
 
 #### Setter
 
