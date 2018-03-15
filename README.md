@@ -39,7 +39,7 @@ _<sup>1</sup> could differ from [custom storages](#custom-storage)_
  *     undefined == valid for session
  *     date '2017-05-11'
  *     datetime '2017-05-11 09:20'
- *     timespan '1w 2d 4h 8s 16ms'
+ *     timespan '1y 2M 3w 4d 5h 6s 7ms' (all optional)
  *     (dates in the past results in removing the cached data)
  */
 cache(STORAGE).set(KEY, VALUE, EXPIRES);

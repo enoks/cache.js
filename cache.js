@@ -1,12 +1,12 @@
 /**
- * cache v1.0.0
+ * cache v1.1.0
  * https://github.com/enoks/cache.js
  *
- * Copyright 2017, Stefan Käsche
+ * Copyright 2018, Stefan Käsche
  * https://github.com/enoks
  *
- * Licensed under GNU GENERAL PUBLIC LICENSE Version 3
- * https://github.com/enoks/cache.js/blob/master/LICENSE
+ * Licensed under MIT
+ * https://github.com/enoks/peekaboo.js/blob/master/LICENSE
  */
 
 ;
@@ -32,12 +32,15 @@
     var storages = {},
 
         cache = function () {
+            // 'localStorage' is default
             switch ( arguments[0] = arguments[0] || 'localStorage' ) {
                 case 'addStorage':
-                    if ( !arguments[1] ) return console.error( 'No storage name!? This can not work.' );
+                    if ( !arguments[1] )
+                        return console.error( 'No storage name!? This can not work.' );
 
                     // storage with this name already exists!?
-                    if ( !!storages[arguments[1]] ) return console.error( 'Storage "' + arguments[1] + '" already exists.' );
+                    if ( !!storages[arguments[1]] )
+                        return console.error( 'Storage "' + arguments[1] + '" already exists.' );
 
                     storages[arguments[1]] = arguments[2] || {};
 
@@ -57,14 +60,17 @@
                     var methods = storages[arguments[0]] || {};
                     if ( Object.prototype.toString.call( methods ) != '[object Object]' ) methods = {};
 
+                    // default setter
                     if ( !methods.set ) methods['set'] = function () {
                         return this;
                     };
 
+                    // default getter
                     if ( !methods.get ) methods['get'] = function ( key, defaultValue ) {
                         return typeof defaultValue == 'undefined' ? null : defaultValue;
                     };
 
+                    // default remover
                     if ( !methods.remove ) methods['remove'] = function () {
                         return this;
                     };
@@ -82,7 +88,7 @@
             this.remove( key );
 
             // only save data for this session
-            if ( typeof expires == 'undefined' ) {
+            if ( typeof expires == 'undefined' || expires.trim() == '' ) {
                 sessionStorage.setItem( key, JSON.stringify( value ) );
             }
             else {
@@ -142,13 +148,16 @@
 
     cache( 'addStorage', 'cookie', {
         set: function ( key, value, expires ) {
-            var cookie = [key + '=' + JSON.stringify( value ), 'path=/'];
+            value = value||'';
+            if (typeof value != 'string') value = JSON.stringify( value );
+            var cookie = [key + '=' + value, 'path=/'];
 
-            if ( typeof expires != 'undefined' ) {
+            if ( typeof expires != 'undefined' && expires.trim() != '' ) {
                 expires = _parseDateTo( expires );
                 if ( expires ) cookie.push( 'expires=' + expires );
             }
 
+            // eventually set cookie
             document.cookie = cookie.join( ';' );
 
             return this;
@@ -163,8 +172,16 @@
                 }
             } );
 
-            return typeof value != 'undefined'
-                ? JSON.parse( value ) : (typeof defaultValue != 'undefined' ? defaultValue : null);
+            if ( typeof value == 'undefined' ) {
+                value = typeof defaultValue != 'undefined' ? defaultValue : null;
+            }
+            else try {
+                JSON.parse( value );
+                value = JSON.parse( value );
+            }
+            catch( e ) {}
+
+            return value;
         },
 
         remove: function ( key ) {
@@ -180,25 +197,31 @@
     // retrieve timestamp/~string of requested date
     function _parseDateTo( date, to ) {
         // normalize
-        date = date.trim().replace( /\s+/, ' ' );
+        date = date.replace( /(\d+)/g, ' $1' ).replace( /\s+/g, ' ' ).trim();
 
-        // e.g. 2w 3d 4h 5m 6s
-        if ( /^-?\d+[wdhms]( -?\d+[wdhms])*$/.test( date ) ) {
+        // e.g. 1y 2M 3w 4d 5h 6m 7s 8ms
+        if ( /^-?\d+[yMwdhms]( -?\d+[yMwdhms])*$/.test( date ) ) {
+            var years = date.match( /\d+y/g ); // years
+            var months = date.match( /\d+M/g ); // month
+
             date = date.replace( 'w', '*1000*60*60*24*7' ) // weeks
                 .replace( 'd', '*1000*60*60*24' ) // days
                 .replace( 'h', '*1000*60*60' ) // hours
-                .replace( 'ms', '' ) // milliseconds
+                .replace( /(\d+y|\d+M|ms|)/g, '' ) // years, months or milliseconds
                 .replace( 'm', '*1000*60' ) // minutes
                 .replace( 's', '*1000' ); // seconds
 
-            date = new Date( Date.now() + eval( date.replace( /\s+/, '+' ) ) );
+            // calculate date
+            date = new Date( Date.now() + (eval( date.replace( /\s+/, '+' ) )||0) ); // weeks and 'below'
+            (years||[]).forEach( function( year ) { date.setFullYear( date.getFullYear() + parseInt( year ) ); } ); // add years
+            (months||[]).forEach( function( month ) { date.setMonth( date.getMonth() + parseInt( month ) ); } ); // add months
         }
         // parse date
         else date = new Date( date );
 
         // sth. wrong :/ invalid date
         if ( isNaN( date.getTime() ) ) {
-            console.warn( '"' + arguments[0] + '" is an invalid date :/' );
+            console.warn( '"' + arguments[0] + '" is an invalid date :/ Please see https://github.com/enoks/cache.js#setter for more information.' );
             return null;
         }
 
