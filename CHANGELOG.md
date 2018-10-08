@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 - 2018-10-08
+**Fixed**
+
+* Date calculation.
+
 ## 1.1.0 - 2018-03-15
 **Added**
 

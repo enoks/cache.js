@@ -1,5 +1,5 @@
 /**
- * cache v1.1.0
+ * cache v1.1.1
  * https://github.com/enoks/cache.js
  *
  * Copyright 2018, Stefan Käsche
@@ -88,7 +88,7 @@
             this.remove( key );
 
             // only save data for this session
-            if ( typeof expires == 'undefined' || expires.trim() == '' ) {
+            if ( typeof expires == 'undefined' || !( expires = ( expires + '' ).trim() ) ) {
                 sessionStorage.setItem( key, JSON.stringify( value ) );
             } else {
                 localStorage.setItem( key, JSON.stringify( {
@@ -146,7 +146,7 @@
             if ( typeof value != 'string' ) value = JSON.stringify( value );
             var cookie = [ key + '=' + value, 'path=/' ];
 
-            if ( typeof expires != 'undefined' && expires.trim() != '' ) {
+            if ( typeof expires != 'undefined' && !!( expires = ( expires + '' ).trim() ) ) {
                 expires = _parseDateTo( expires );
                 if ( expires ) cookie.push( 'expires=' + expires );
             }
@@ -190,17 +190,19 @@
     // retrieve timestamp/~string of requested date
     function _parseDateTo( date, to ) {
         // normalize
-        date = date.replace( /(\d+)/g, ' $1' ).replace( /\s+/g, ' ' ).trim();
+        date = ( date + '' ).replace( /(-?\d+)/g, ' $1' ).replace( /\s+/g, ' ' ).trim();
 
         // e.g. 1y 2M 3w 4d 5h 6m 7s 8ms
-        if ( /^-?\d+[yMwdhms]( -?\d+[yMwdhms])*$/.test( date ) ) {
-            var years = date.match( /\d+y/g ); // years
-            var months = date.match( /\d+M/g ); // month
+        if ( /^-?\d+(y|M|w|d|h|m|s|ms)?( -?\d+(y|M|w|d|h|m|s|ms)?)*$/.test( date ) ) {
+            var years = date.match( /-?\d+y/g ); // years
+            date = date.replace( /-?\d+y/g, '' );
+            var months = date.match( /-?\d+M/g ); // month
+            date = date.replace( /-?\d+M/g, '' );
 
             date = date.replace( 'w', '*1000*60*60*24*7' ) // weeks
                 .replace( 'd', '*1000*60*60*24' ) // days
                 .replace( 'h', '*1000*60*60' ) // hours
-                .replace( /(\d+y|\d+M|ms|)/g, '' ) // years, months or milliseconds
+                .replace( /ms/g, '' ) // milliseconds
                 .replace( 'm', '*1000*60' ) // minutes
                 .replace( 's', '*1000' ); // seconds
 
