@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2 - 2018-10-12
+**Fixed**
+
+* Cookie value en-/decoding.
+
 ## 1.1.1 - 2018-10-08
 **Fixed**
 

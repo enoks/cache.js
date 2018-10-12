@@ -1,5 +1,5 @@
 /**
- * cache v1.1.1
+ * cache v1.1.2
  * https://github.com/enoks/cache.js
  *
  * Copyright 2018, Stefan Käsche
@@ -144,7 +144,7 @@
         set: function( key, value, expires ) {
             value = value || '';
             if ( typeof value != 'string' ) value = JSON.stringify( value );
-            var cookie = [ key + '=' + value, 'path=/' ];
+            var cookie = [ key + '=' + encodeURIComponent( value ), 'path=/' ];
 
             if ( typeof expires != 'undefined' && !!( expires = ( expires + '' ).trim() ) ) {
                 expires = _parseDateTo( expires );
@@ -160,9 +160,9 @@
         get: function( key, defaultValue ) {
             var value;
 
-            decodeURIComponent( document.cookie ).split( ';' ).forEach( function( cookie ) {
+            document.cookie.split( ';' ).forEach( function( cookie ) {
                 if ( typeof value == 'undefined' && cookie.trim().indexOf( key + '=' ) == 0 ) {
-                    value = cookie.replace( new RegExp( '^\\s*' + key + '=' ), '' );
+                    value = decodeURIComponent( cookie.replace( new RegExp( '^\\s*' + key + '=' ), '' ) );
                 }
             } );
 
