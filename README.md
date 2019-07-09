@@ -25,7 +25,7 @@ By default there are two `STORAGE` types implemented:
 
 ### Methods
 
-Every storage has three methods<sup>1</sup> to **set**, **get** and **remove** data from cache.
+Every storage has five methods<sup>1</sup> to **set**, **get**, **remove** and check (**has** and **is**) data from cache.
 
 _<sup>1</sup> could differ from [custom storages](#custom-storage)_
 
@@ -41,6 +41,7 @@ _<sup>1</sup> could differ from [custom storages](#custom-storage)_
  *     datetime '2017-05-11 09:20'
  *     timespan '1y 2M 3w 4d 5h 6s 7ms' (all optional)
  *     (dates in the past results in removing the cached data)
+ * @return cache(STORAGE)
  */
 cache(STORAGE).set(KEY, VALUE, EXPIRES);
 ```
@@ -51,6 +52,7 @@ cache(STORAGE).set(KEY, VALUE, EXPIRES);
 /**
  * @param {string} KEY
  * @param {mixed} DEFAULT_VALUE
+ * @return {mixed}
  */
 cache(STORAGE).get(KEY, DEFAULT_VALUE);
 ```
@@ -60,8 +62,34 @@ cache(STORAGE).get(KEY, DEFAULT_VALUE);
 ```js
 /**
  * @param {string} KEY
+ * @return cache(STORAGE)
  */
 cache(STORAGE).remove(KEY);
+```
+
+#### Tester
+
+```js
+/**
+ * Check if KEY exists in storage.
+ * 
+ * @param {string} KEY
+ * @return {boolean}
+ */
+cache(STORAGE).has(KEY);
+
+/**
+ * Check if stored KEY value === VALUE.
+ * Shortcut of cache(STORAGE).get(KEY, DEFAULT_VALUE) === VALUE
+ * 
+ * NOT overridable.
+ * 
+ * @param {string} KEY
+ * @param {mixed} VALUE
+ * @param {mixed} DEFAULT_VALUE
+ * @return {boolean}
+ */
+cache(STORAGE).is(KEY, VALUE, DEFAULT_VALUE);
 ```
 
 ### Custom storage

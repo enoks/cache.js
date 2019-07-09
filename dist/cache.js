@@ -1,11 +1,11 @@
 /**
- * cache v1.1.2
+ * cache v1.2.0
  * https://github.com/enoks/cache.js
  *
- * Copyright 2018, Stefan Käsche
+ * Copyright 2019, Stefan Käsche
  * https://github.com/enoks
  *
- * Licensed under MIT
+ * @license MIT
  * https://github.com/enoks/peekaboo.js/blob/master/LICENSE
  */
 
@@ -59,6 +59,17 @@
 
                     var methods = storages[ arguments[ 0 ] ] || {};
                     if ( Object.prototype.toString.call( methods ) != '[object Object]' ) methods = {};
+
+                    // default checker (key)
+                    // problem in case cached value IS null :/
+                    if ( !methods.has ) methods[ 'has' ] = function( key ) {
+                        return methods.get( key ) !== null;
+                    };
+
+                    // check value
+                    methods[ 'is' ] = function( key, value, defaultValue ) {
+                        return methods.get( key, defaultValue ) === value;
+                    };
 
                     // default setter
                     if ( !methods.set ) methods[ 'set' ] = function() {
@@ -120,7 +131,7 @@
                     if ( data.expires && Date.now() > Date.parse( data.expires ) ) {
                         this.remove( key );
                         value = null;
-                    } else value = data.data || null;
+                    } else value = typeof data.data !== 'undefined' ? data.data : null;
                 } catch ( e ) {}
             }
 
@@ -133,6 +144,10 @@
             localStorage.removeItem( key );
 
             return this;
+        },
+
+        has: function( key ) {
+            return ( localStorage.hasOwnProperty( key ) && !this.is( key, null ) ) || sessionStorage.hasOwnProperty( key );
         }
     } );
 
@@ -180,6 +195,10 @@
         remove: function( key ) {
             this.set( key, null, '-1s' );
             return this;
+        },
+
+        has: function( key ) {
+            return new RegExp( '(; ?)?' + key + '=' ).test( document.cookie );
         }
     } );
 

@@ -7,21 +7,21 @@ var gulp = require('gulp'),
     destination = './dist';
 
 gulp.task('js', function () {
-    gulp.src(source)
+    return gulp.src(source)
         // https://github.com/beautify-web/js-beautify#options
         .pipe(beautify({
             end_with_newline: true,
             max_preserve_newlines: 2,
             space_in_paren: true
         }))
-        .pipe(gulp.dest(destination));
+        .pipe(gulp.dest(destination))
 
-    gulp.src(source)
         .pipe(rename({suffix: '.min'}))
-        .pipe(uglify({preserveComments: 'license'}))
+        .pipe(uglify({output: {comments: /^!|@preserve|@license|@cc_on/i}}))
         .pipe(gulp.dest(destination));
 });
 
-gulp.task('default', function () {
-    gulp.watch(source, ['js']);
-});
+gulp.task('default', gulp.series(function (done) {
+    gulp.watch(source, gulp.series('js'));
+    done();
+}));

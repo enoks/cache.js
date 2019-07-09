@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0 - 2019-07-09
+**Added**
+
+* `has` (key) and `is` (value) methods. 
+
 ## 1.1.2 - 2018-10-12
 **Fixed**
 
