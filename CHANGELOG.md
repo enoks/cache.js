@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0 - 2019-08-01
+**Added**
+
+* Settable cookie attributes (more than `expires`).
+
 ## 1.2.0 - 2019-07-09
 **Added**
 

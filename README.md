@@ -44,6 +44,16 @@ _<sup>1</sup> could differ from [custom storages](#custom-storage)_
  * @return cache(STORAGE)
  */
 cache(STORAGE).set(KEY, VALUE, EXPIRES);
+
+/**
+ * @since 1.3.0
+ * (Backward compatibility: 3rd parameter can still be just `EXPIRES`)
+ *
+ * @param ...
+ * @param {string|object} ATTRIBUTES (optional)
+ *     see 'old' definition above or `{KEY: VALUE}` object (see https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#Write_a_new_cookie)
+ */
+cache('cookie').set(KEY, VALUE, ATTRIBUTES);
 ```
 
 #### Getter

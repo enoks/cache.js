@@ -1,5 +1,5 @@
 /**
- * cache v1.2.0
+ * cache v1.3.0
  * https://github.com/enoks/cache.js
  *
  * Copyright 2019, Stefan Käsche
@@ -156,14 +156,27 @@
      */
 
     cache( 'addStorage', 'cookie', {
-        set: function( key, value, expires ) {
+        set: function( key, value, attributes ) {
             value = value || '';
             if ( typeof value != 'string' ) value = JSON.stringify( value );
-            var cookie = [ key + '=' + encodeURIComponent( value ), 'path=/' ];
+            var cookie = [ key + '=' + encodeURIComponent( value ) ];
 
-            if ( typeof expires != 'undefined' && !!( expires = ( expires + '' ).trim() ) ) {
-                expires = _parseDateTo( expires );
-                if ( expires ) cookie.push( 'expires=' + expires );
+            // @since 1.3.0 : expires vs attributes['expires']
+
+            if ( typeof attributes == 'undefined' ) attributes = {};
+
+            if ( [ 'number', 'string' ].indexOf( typeof( attributes ) ) >= 0 ) {
+                attributes = { expires: attributes };
+            }
+
+            if ( typeof attributes[ 'expires' ] != 'undefined' && !!( attributes[ 'expires' ] = ( attributes[ 'expires' ] + '' ).trim() ) ) {
+                attributes[ 'expires' ] = _parseDateTo( attributes[ 'expires' ] );
+                if ( !attributes[ 'expires' ] ) delete attributes[ 'expires' ];
+            }
+
+            for ( var attribute in attributes ) {
+                if ( !attributes.hasOwnProperty( attribute ) ) continue;
+                cookie.push( attribute + '=' + attributes[ attribute ] );
             }
 
             // eventually set cookie
