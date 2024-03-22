@@ -1,5 +1,5 @@
 /**
- * cache v1.3.0
+ * cache v1.3.1
  * https://github.com/enoks/cache.js
  *
  * Copyright 2019, Stefan Käsche
@@ -24,7 +24,7 @@
     } else {
         window.cache = definition;
     }
-} )( this, function( undefined ) {
+} )( this, function() {
     "use strict";
 
     // all available storages
@@ -49,9 +49,9 @@
                 case 'removeStorage':
                     return delete storages[ arguments[ 1 ] ];
 
-                    // access specific storage and its methods
-                    // default storage (defined above) is the browser's localStorage
-                    // or sessionStorage for session based data cache
+                // access specific storage and its methods
+                // default storage (defined above) is the browser's localStorage
+                // or sessionStorage for session based data cache
                 default:
                     if ( !storages[ arguments[ 0 ] ] ) {
                         console.error( 'No "' + arguments[ 0 ] + '" storage/cache available. Please choose "' + Object.keys( storages ).join( '", "' ) + '".' );
@@ -172,6 +172,10 @@
             if ( typeof attributes[ 'expires' ] != 'undefined' && !!( attributes[ 'expires' ] = ( attributes[ 'expires' ] + '' ).trim() ) ) {
                 attributes[ 'expires' ] = _parseDateTo( attributes[ 'expires' ] );
                 if ( !attributes[ 'expires' ] ) delete attributes[ 'expires' ];
+            }
+
+            if ( typeof attributes[ 'Path' ] != 'string' ) {
+                attributes[ 'Path' ] = '/';
             }
 
             for ( var attribute in attributes ) {
